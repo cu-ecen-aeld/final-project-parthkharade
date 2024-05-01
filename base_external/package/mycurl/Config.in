@@ -1,0 +1,4 @@
+config BR2_PACKAGE_MYCURL
+	bool "mycurl"
+	help
+	  Installs curl version 7.68.0
