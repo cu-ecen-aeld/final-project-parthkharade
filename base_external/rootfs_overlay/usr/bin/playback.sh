@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source token.sh
+TOKEN_FILE=/usr/bin/token.sh
+source $TOKEN_FILE
 OPERATION=$1
 case $OPERATION in
   "previous")
@@ -20,5 +21,4 @@ case $OPERATION in
   --url https://api.spotify.com/v1/me/player/play \
   --header "Authorization: Bearer $ACCESS_TOKEN");;
     *)
-    echo "Invalid operation";;
 esac

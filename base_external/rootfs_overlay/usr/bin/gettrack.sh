@@ -1,10 +1,12 @@
 #!/bin/bash
 
 
-DEST_IP="10.0.0.211"
+DEST_IP="192.168.109.73"
+HOST_IP="192.168.109.0"
 DEST_PORT=9000
-LOG_FILE="log.txt"
-source token.sh
+HOST_PORT=22
+TOKEN_FILE="/usr/bin/token.sh"
+source $TOKEN_FILE
 result=$(curl -s -k --request GET \
   --url https://api.spotify.com/v1/me/player/currently-playing \
   --header "Authorization: Bearer $ACCESS_TOKEN")
@@ -30,9 +32,9 @@ progress_sec=$(echo $result | jq -r '.progress_ms' | awk '{printf "%02d", int($1
 total_min=$(echo $result | jq -r '.item.duration_ms' | awk '{printf "%02d", int($1/60000)}')
 total_sec=$(echo $result | jq -r '.item.duration_ms' | awk '{printf "%02d", int($1/1000)%60}')
 
-PACKET_DATA="$song_name""#""$artist_name""#""$progress_min:$progress_sec / $total_min:$total_sec$"
-REC=$(printf "%s" "$PACKET_DATA" | nc -w2 $DEST_IP $DEST_PORT)
+PACKET_DATA="$song_name""#""$artist_name""#""$progress_min:$progress_sec / $total_min:$total_sec#$"
+REC=$(printf "%s" "$PACKET_DATA" | nc -w1 $DEST_IP $DEST_PORT)
 if [ ! -z $REC ]; then
-  source playback.sh $REC
+  printf "%s" "$REC" | nc -w0 $HOST_IP $HOST_PORT
 fi
  
